@@ -36,7 +36,7 @@ if compilation errors arise, Ensure your Haxe version is correct and your haxeli
 
 [Git](https://git-scm.com/downloads)
 
-[VS Community](https://visualstudio.microsoft.com/vs/community/)
+[VS Community Build Tools](https://aka.ms/vs/17/release/vs_BuildTools.exe)
 
 within the VS Community Installer, download `Desktop development with c++`
 
