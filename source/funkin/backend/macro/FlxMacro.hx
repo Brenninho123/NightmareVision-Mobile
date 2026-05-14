@@ -238,8 +238,8 @@ class FlxMacro
 	}
 	
 	/**
-	 * Related to above function, adds two arrays to store draw info for rgb shaders and an rgbShader field
-	 * Also edits the `reset` function to reset said fields
+	 * Related to above function, adds arrays to store draw info for rgb shaders and an rgbShader field
+	 * Also edits the `reset` function to reset said arrays
 	 * @return Array<haxe.macro.Expr.Field>
 	 */
 	public static macro function buildFlxDrawBaseItem():Array<haxe.macro.Expr.Field>
