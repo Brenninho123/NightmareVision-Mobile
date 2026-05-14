@@ -301,16 +301,6 @@ class FlxMacro
 		var cls:haxe.macro.Type.ClassType = Context.getLocalClass().get();
 		var fields:Array<haxe.macro.Expr.Field> = Context.getBuildFields();
 		
-		final type:FlxDrawItemType = switch cls.name
-		{
-			case "FlxDrawQuadsItem":
-				TILES;
-			case "FlxDrawTrianglesItem":
-				TRIANGLES;
-			case _:
-				throw "Invalid class";
-		}
-		
 		for (field in fields)
 		{
 			switch (field.name)
@@ -345,11 +335,4 @@ class FlxMacro
 		
 		return fields;
 	}
-}
-
-// can't access this in a macro since its in another file
-enum FlxDrawItemType
-{
-	TILES;
-	TRIANGLES;
 }
