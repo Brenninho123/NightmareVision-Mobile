@@ -7,7 +7,7 @@ import funkin.game.shaders.RGBShader.RGBGraphics;
  */
 class RGBSprite extends FunkinSprite
 {
-	public var rgbGraphics:RGBGraphics;
+	public var rgbGraphics:RGBGraphics = new RGBGraphics();
 	
 	override function drawSimple(camera:FlxCamera)
 	{
