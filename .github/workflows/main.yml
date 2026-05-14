@@ -67,6 +67,8 @@ jobs: # FUCK MY LIFE BROOOOO
                 haxelib setup ~/haxelib
                 haxelib install hxcpp > /dev/null --quiet
                 haxelib install hxpkg --quiet
+                haxelib run lime rebuild hxcpp windows -clean
+                haxelib run lime rebuild lime windows -clean
                 haxelib run hxpkg install
             - name: Compile build
               run: haxelib run lime build Project.xml linux -D ${{inputs.buildFlags}}
