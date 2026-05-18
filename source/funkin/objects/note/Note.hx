@@ -8,7 +8,7 @@ import flixel.math.FlxRect;
 
 import funkin.data.*;
 import funkin.game.shaders.*;
-import funkin.game.shaders.RGBPalette.RGBShaderReference;
+import funkin.game.shaders.RGBShader;
 import funkin.objects.Character;
 import funkin.scripts.*;
 import funkin.states.*;
@@ -67,6 +67,9 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 	public var tail:Array<Note> = []; // for sustains
 	public var parent:Note;
 	
+	// 0 to 1, 1 = missed
+	public var coyoteProgress:Float = 0;
+	
 	/**
 	 * if true, the note cannot be hit.
 	 * 
@@ -85,12 +88,9 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 	public var eventVal1:String = '';
 	public var eventVal2:String = '';
 	
-	public var rgbShader:RGBShaderReference;
+	public var rgbGraphics:RGBGraphics;
 	public var rgbEnabled:Bool = true;
 	public var reAssignable:Bool = true;
-	public var reColor:Array<FlxColor>;
-	
-	public static var globalRgbShaders:Array<RGBPalette> = [];
 	
 	public var inEditor:Bool = false;
 	public var skipScale:Bool = false;
@@ -188,9 +188,9 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 					ignoreNote = mustPress;
 					missHealth = isSustainNote ? 0.1 : 0.3;
 					hitCausesMiss = true;
-					rgbShader.r = 0xFF101010;
-					rgbShader.g = 0xFFFF0000;
-					rgbShader.b = 0xFF990022;
+					rgbGraphics.r = 0xFF101010;
+					rgbGraphics.g = 0xFFFF0000;
+					rgbGraphics.b = 0xFF990022;
 					
 				case 'No Animation':
 					noAnimation = true;
@@ -231,7 +231,6 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 		}
 		this.inEditor = inEditor;
 		
-		x += (ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + 50;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
 		this.strumTime = strumTime;
@@ -245,10 +244,8 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 		
 		if (noteData > -1)
 		{
-			rgbShader = NoteUtil.initRGBShader(this, noteData, quant, player);
+			rgbGraphics = NoteUtil.getCurColors(noteData, quant, player);
 			rgbEnabled = NoteUtil.getSkinFromID(player)?.inEngineColoring ?? false;
-			
-			reColor = NoteUtil.getCurColors(noteData, quant, player);
 			
 			texture = '';
 			
@@ -269,7 +266,7 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 			
 			animSuffix = prevNote.animSuffix;
 			
-			missHealth = ClientPrefs.guitarHeroSustains ? 0 : 0.0475;
+			missHealth = 0.0475;
 			
 			if (prevNote.isSustainNote)
 			{
@@ -303,8 +300,6 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 		if (noteScript != null) if (noteScript.executeFunc("onReloadNote", [this, _prefix, _texture, _suffix], this) == ScriptConstants.STOP_FUNC) return;
 		
 		skin ??= NoteUtil.getSkinFromID(player);
-		
-		rgbShader.setColors(reColor);
 		
 		var _skin:String = _texture;
 		if (_skin.length < 1)
@@ -384,8 +379,7 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 	{
 		if (!reAssignable) return;
 		
-		reColor = NoteUtil.getCurColors(noteData, quant, player);
-		rgbShader.setColors(reColor);
+		rgbGraphics = NoteUtil.getCurColors(noteData, quant, player);
 	}
 	
 	// SPECIFICALLY for note types, only use if u 100% do not want to have ur note re-colored
@@ -393,13 +387,12 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 	{
 		var fallback = NoteUtil.getCurColors(noteData, quant, player);
 		
-		reColor = fallback;
+		rgbGraphics = fallback;
 		if (color != null || color.length == skin?.keys ?? 4)
 		{
 			reAssignable = false;
-			reColor = color;
+			rgbGraphics.setColors(color);
 		}
-		rgbShader.setColors(reColor);
 	}
 	
 	public function clip(strum:StrumNote)
@@ -442,11 +435,11 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 			}
 		}
 		
-		if (rgbShader != null)
+		if (rgbGraphics != null)
 		{
-			rgbShader.enabled = rgbEnabled;
+			rgbGraphics.enabled = rgbEnabled;
 			
-			rgbShader.alphaMult = (alphaMod * alphaMod2) * (playField?.baseAlpha ?? 1.0);
+			rgbGraphics.alpha = (alphaMod * alphaMod2) * (playField?.baseAlpha ?? 1.0);
 		}
 		
 		var actualHitbox:Float = hitbox * earlyHitMult;
@@ -456,12 +449,26 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 		var absDiff = Math.abs(diff);
 		canBeHit = absDiff <= actualHitbox;
 		
-		if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit) tooLate = true;
-		
+		if (!isSustainNote) if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit) tooLate = true;
+		else if (parent != null) // coyote timer
+			if (parent.coyoteProgress >= 1 && !wasGoodHit) tooLate = true;
+			
 		if (tooLate && !inEditor)
 		{
 			if (alpha > 0.3) alpha = 0.3;
 		}
+	}
+	
+	override function drawSimple(camera:FlxCamera)
+	{
+		super.drawSimple(camera);
+		rgbGraphics.pushQuad(camera);
+	}
+	
+	override function drawComplex(camera:FlxCamera)
+	{
+		super.drawComplex(camera);
+		rgbGraphics.pushQuad(camera);
 	}
 	
 	override public function destroy()

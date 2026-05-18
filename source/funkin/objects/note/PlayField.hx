@@ -14,6 +14,8 @@ typedef NoteSignal = FlxTypedSignal<(Note, PlayField) -> Void>;
 
 class PlayField extends FlxTypedContainer<StrumNote>
 {
+	public static final UNDERLAY_PADDING:Float = 15;
+	
 	public var _skin:NoteSkin;
 	
 	public var owner(default, set):Character;
@@ -80,6 +82,8 @@ class PlayField extends FlxTypedContainer<StrumNote>
 	public var offsetReceptors:Bool = false;
 	public var player:Int = 0;
 	public var alpha(default, set):Float = 1;
+	
+	public var underlaySpr:FlxSprite;
 	
 	public function set_alpha(value:Float)
 	{
@@ -161,12 +165,77 @@ class PlayField extends FlxTypedContainer<StrumNote>
 		grpSusSplashes.add(sus);
 		sus.alpha = 0.0;
 		
+		underlaySpr = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE);
+		underlaySpr.color = FlxColor.BLACK;
+		underlaySpr.alpha = 0;
+		underlaySpr.scrollFactor.set();
+		
 		splashLayer.add(grpSusSplashes);
 		splashLayer.add(grpNoteSplashes);
 		
 		this.onNoteHit.add(noteHit);
 		this.onNoteMiss.add(noteMiss);
 		this.onMissPress.add(noteMissPress);
+	}
+	
+	override function draw()
+	{
+		if (underlaySpr.exists && ClientPrefs.underlayOpacity > 0 && ClientPrefs.underlayType == FIELD)
+		{
+			var minX:Float = Math.POSITIVE_INFINITY;
+			var maxX:Float = Math.NEGATIVE_INFINITY;
+			
+			for (strum in members)
+			{
+				if (strum != null && strum.exists && strum.visible)
+				{
+					minX = Math.min(minX, strum.x);
+					maxX = Math.max(maxX, strum.x + strum.width);
+				}
+			}
+			
+			forEachAliveNote((daNote:Note) -> {
+				if (daNote.isOnScreen())
+				{
+					minX = Math.min(minX, daNote.x);
+					maxX = Math.max(maxX, daNote.x + daNote.width);
+				}
+			});
+			
+			final targetX = minX - UNDERLAY_PADDING;
+			final targetW = (maxX - minX) + (UNDERLAY_PADDING * 2);
+			
+			// Instant update
+			underlaySpr.x = targetX;
+			
+			underlaySpr.scale.x = targetW;
+			underlaySpr.scale.y = camera.viewHeight;
+			underlaySpr.screenCenter(Y);
+			underlaySpr.updateHitbox();
+			
+			underlaySpr.camera = getDefaultCamera();
+			
+			underlaySpr.alpha = ClientPrefs.underlayOpacity;
+			
+			if (PlayState.instance.modManager != null) // temp
+			{
+				final mgr = PlayState.instance.modManager;
+				
+				inline function getMgrVal(mod:String)
+				{
+					var val = mgr.getValue(mod, player);
+					
+					val = 1 - val;
+					return val;
+				}
+				
+				underlaySpr.alpha *= getMgrVal("alpha") * getMgrVal("dark");
+			}
+			
+			underlaySpr.draw();
+		}
+		
+		super.draw();
 	}
 	
 	public function clearReceptors()
@@ -248,7 +317,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 		note.skin = _skin;
 		note.texture = _skin.noteTexture;
 		note.rgbEnabled = _skin.inEngineColoring;
-		note.rgbShader.enabled = note.rgbEnabled;
+		note.rgbGraphics.enabled = note.rgbEnabled;
 		
 		if (hasChangedSkin) note.updateColors();
 		
@@ -257,7 +326,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 		if (note.playField != this || note.playField == null) note.playField = this;
 	}
 	
-	public function forEachAliveNote(func:Note->Void)
+	public inline function forEachAliveNote(func:Note->Void)
 	{
 		for (note in notes)
 			if (note != null && note.exists && note.alive) func(note);
@@ -297,7 +366,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			}
 		}
 		
-		if (ClientPrefs.guitarHeroSustains && !note.isSustainNote)
+		if (!note.isSustainNote)
 		{
 			for (sustain in note.tail)
 				sustain.blockHit = false; // makes the hold note active when you press the base note
@@ -438,7 +507,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 		if (noteScriptRet != ScriptConstants.STOP_FUNC) PlayState.instance.scripts.call('noteMiss', scriptArgs, false, [note.noteType]);
 		
 		// hold note missing stuff, makes the hold unhittable (and kills it, might make it just transparent if i can fix some stuff)
-		if (ClientPrefs.guitarHeroSustains && !note.hitCausesMiss && !note.canMiss)
+		if (!note.hitCausesMiss && !note.canMiss)
 		{
 			final tail = (note.isSustainNote ? note.parent.tail : note.tail);
 			for (sustain in tail)
@@ -495,7 +564,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			{
 				final data = note.noteData;
 				final skin:String = _skin.splashTexture;
-				final colors = note.reColor;
+				final colors = note.rgbGraphics;
 				
 				var splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
 				splash.setupNoteSplash(strum, note, skin, colors, this);
@@ -518,7 +587,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			if (strum != null)
 			{
 				final data = note.noteData;
-				final colors = note.reColor;
+				final colors = note.rgbGraphics;
 				
 				// sustain length + step length (all in ms) to time the ending of the sustain covering
 				final time = ((note.sustainLength + (Conductor.stepCrotchet * 1.25)) / 1000);
@@ -552,6 +621,8 @@ class PlayField extends FlxTypedContainer<StrumNote>
 		onMissPress.removeAll();
 		onMissPress.destroy();
 		
+		underlaySpr.destroy();
+		
 		super.destroy();
 	}
 	
@@ -567,7 +638,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			strum.skin = _skin;
 			strum.texture = _skin.noteTexture;
 			strum.useRGBShader = _skin.inEngineColoring;
-			strum.rgbShader.enabled = strum.useRGBShader;
+			strum.rgbGraphics.enabled = strum.useRGBShader;
 			strum.reloadNote();
 			
 			strum.playAnim('static');
@@ -578,7 +649,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			note.skin = _skin;
 			note.texture = _skin.noteTexture;
 			note.rgbEnabled = _skin.inEngineColoring;
-			note.rgbShader.enabled = note.rgbEnabled;
+			note.rgbGraphics.enabled = note.rgbEnabled;
 			note.loadNoteAnims();
 			
 			note.reloadNote('', note.texture, '');
@@ -586,21 +657,20 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			note.scale.set(_skin.noteScale, _skin.noteScale);
 			note.baseScale.copyFrom(note.scale);
 			
-			note.reColor = NoteUtil.getCurColors(note.noteData, note.quant, note.player);
-			note.rgbShader.setColors(note.reColor);
+			note.rgbGraphics = NoteUtil.getCurColors(note.noteData, note.quant, note.player);
 		});
 		
 		grpNoteSplashes.forEachAlive((splash) -> {
 			splash.scale.set(_skin.splashScale, _skin.splashScale);
 			splash.baseScale.copyFrom(splash.scale);
 			
-			splash.rgbShader.enabled = _skin.inEngineColoring;
+			splash.rgbGraphics.enabled = _skin.inEngineColoring;
 		});
 		grpSusSplashes.forEachAlive((splash) -> {
 			splash.scale.set(_skin.susSplashScale, _skin.susSplashScale);
 			splash.baseScale.copyFrom(splash.scale);
 			
-			splash.rgbShader.enabled = _skin.inEngineColoring;
+			splash.rgbGraphics.enabled = _skin.inEngineColoring;
 		});
 	}
 	
