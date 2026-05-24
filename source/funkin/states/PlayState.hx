@@ -1854,13 +1854,7 @@ class PlayState extends MusicBeatState
 		
 		if (generatedMusic)
 		{
-			if (!inCutscene)
-			{
-				if (!cpuControlled) keyShit();
-				else if (boyfriend.holdTimer > Conductor.stepCrotchet * 0.0011 * boyfriend.singDuration
-					&& boyfriend.getAnimName().startsWith('sing')
-					&& !boyfriend.getAnimName().endsWith('miss')) boyfriend.dance(boyfriend.forceDance);
-			}
+			if (!inCutscene && !cpuControlled) keyShit();
 			
 			var i:Int = notes.length;
 			while (--i >= 0)
@@ -2806,6 +2800,10 @@ class PlayState extends MusicBeatState
 	function keyShit():Void
 	{
 		// HOLDING
+		var up = controls.NOTE_UP;
+		var right = controls.NOTE_RIGHT;
+		var down = controls.NOTE_DOWN;
+		var left = controls.NOTE_LEFT;
 		if (startedCountdown && !boyfriend.stunned && generatedMusic)
 		{
 			// rewritten inputs???
@@ -2856,9 +2854,13 @@ class PlayState extends MusicBeatState
 				}
 			});
 			
-			if (boyfriend.holdTimer > Conductor.stepCrotchet * 0.0011 * boyfriend.singDuration
-				&& boyfriend.getAnimName().startsWith('sing')
-				&& !boyfriend.getAnimName().endsWith('miss')) boyfriend.dance(boyfriend.forceDance);
+			if (!left && !down && !up && !right)
+			{
+				for (field in playFields)
+				{
+					if (field.playerControls && field.owner?.holding) field.owner.holding = false;
+				}
+			}
 		}
 		
 		// TO DO: Find a better way to handle controller inputs, this should work for now

@@ -411,6 +411,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 				final animToPlay = _skin.singAnimations[Std.int(Math.abs(note.noteData))] + daAlt;
 				
 				char.holdTimer = 0;
+				if (field.playerControls) char.holding = true;
 				
 				// ghost stuff
 				final chord = noteRows[field.ID][note.row];
