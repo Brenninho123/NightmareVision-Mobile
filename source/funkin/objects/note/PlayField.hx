@@ -332,12 +332,11 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			if (note != null && note.exists && note.alive) func(note);
 	}
 	
-	inline function disposeNote(note:Note):Void
+	public inline function disposeNote(note:Note):Void
 	{
-		removeNote(note);
-		
 		note.kill();
-		note.destroy();
+		
+		removeNote(note);
 	}
 	
 	public function noteHit(note:Note, field:PlayField):Void
@@ -464,10 +463,16 @@ class PlayField extends FlxTypedContainer<StrumNote>
 		
 		note.wasGoodHit = true;
 		
-		var ratingThing:funkin.game.Rating = funkin.game.Rating.judgeNote(note, Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset) / PlayState.instance?.playbackRate);
-		final splashCheck = (playerControls ? ratingThing.name == 'sick' || ratingThing.name == 'epic' : true);
+		var shouldSplash:Bool = true;
+		if (field.playerControls)
+		{
+			var ratingThing:funkin.game.Rating = funkin.game.Rating.judgeNote(note, Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset) / PlayState.instance?.playbackRate);
+			
+			shouldSplash = (ratingThing.name == 'sick' || ratingThing.name == 'epic');
+		}
 		
-		if (splashCheck) spawnSplash(note);
+		if (field.noteSplashes && shouldSplash) field.spawnSplash(note);
+		
 		spawnSusSplash(note, field.playerControls);
 		
 		final globalScript = PlayState.instance.callNoteTypeScript(note.noteType, 'hit', scriptArgs);
@@ -498,6 +503,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 					
 					var animToPlay:String = _skin.singAnimations[Std.int(Math.abs(note.noteData))] + 'miss' + daAlt;
 					char.playAnim(animToPlay, true);
+					char.holdTimer = 0;
 				}
 			}
 		}
