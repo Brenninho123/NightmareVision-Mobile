@@ -317,6 +317,8 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 		hitPriority = 1;
 		hitHealth = .023;
 		missHealth = .0475;
+		coyoteProgress = 0;
+		
 		noAnimation = noMissAnimation = ratingDisabled = hitCausesMiss = false;
 		
 		ignoreNote = canBeHit = tooLate = wasGoodHit = noteWasHit = hitByOpponent = false;
@@ -360,6 +362,7 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 		if (parent != null)
 		{
 			tailState = parent.tailState;
+			parent.coyoteProgress = 0;
 		}
 		else if (tailState == null || tailState.tail.length > 0)
 		{
@@ -589,10 +592,17 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 		var absDiff = Math.abs(diff);
 		canBeHit = absDiff <= actualHitbox;
 		
-		if (!isSustainNote) if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit) tooLate = true;
+		// file auto-formatting completely broke the coyote timer LOL
+		// so unfortunately you will have to deal with this really ugly formatting
+		if (!isSustainNote)
+		{
+			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit) tooLate = true;
+		}
 		else if (parent != null) // coyote timer
+		{
 			if (parent.coyoteProgress >= 1 && !wasGoodHit) tooLate = true;
-			
+		}
+		
 		if (tooLate && !inEditor && alpha > 0.3) alpha = 0.3;
 	}
 	

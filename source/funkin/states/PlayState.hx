@@ -2883,7 +2883,7 @@ class PlayState extends MusicBeatState
 							totalPlayed++;
 							RecalculateRating(true);
 						};
-						else daNote.parent.coyoteProgress += FlxG.elapsed / 0.45;
+						else daNote.parent.coyoteProgress += FlxG.elapsed / 0.5;
 					}
 				}
 			});
