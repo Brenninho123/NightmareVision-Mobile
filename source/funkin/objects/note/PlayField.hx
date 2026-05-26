@@ -84,6 +84,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 	public var alpha(default, set):Float = 1;
 	
 	public var underlaySpr:FlxSprite;
+	public var underlayAlphaMult:Float = 1;
 	
 	public function set_alpha(value:Float)
 	{
@@ -229,7 +230,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 					return val;
 				}
 				
-				underlaySpr.alpha *= getMgrVal("alpha") * getMgrVal("dark");
+				underlaySpr.alpha *= getMgrVal("alpha") * getMgrVal("dark") * underlayAlphaMult;
 			}
 			
 			underlaySpr.draw();
