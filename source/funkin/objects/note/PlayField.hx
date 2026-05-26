@@ -206,7 +206,6 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			final targetX = minX - UNDERLAY_PADDING;
 			final targetW = (maxX - minX) + (UNDERLAY_PADDING * 2);
 			
-			// Instant update
 			underlaySpr.x = targetX;
 			
 			underlaySpr.scale.x = targetW;
@@ -215,8 +214,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			underlaySpr.updateHitbox();
 			
 			underlaySpr.camera = getDefaultCamera();
-			
-			underlaySpr.alpha = ClientPrefs.underlayOpacity;
+			underlaySpr.alpha = ClientPrefs.underlayOpacity * underlayAlphaMult;
 			
 			if (PlayState.instance.modManager != null) // temp
 			{
@@ -230,7 +228,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 					return val;
 				}
 				
-				underlaySpr.alpha *= getMgrVal("alpha") * getMgrVal("dark") * underlayAlphaMult;
+				underlaySpr.alpha *= getMgrVal("alpha") * getMgrVal("dark");
 			}
 			
 			underlaySpr.draw();
