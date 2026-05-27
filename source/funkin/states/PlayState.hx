@@ -863,7 +863,7 @@ class PlayState extends MusicBeatState
 		
 		FunkinAssets.cache.clearUnusedMemory();
 		
-		if (traceCheck) trace('FULL SONG LOAD TIME: ${Sys.time() - loadStart}');
+		if (traceCheck) trace('FULL SONG [${Paths.sanitize(SONG.song)}] LOAD TIME: ${Sys.time() - loadStart}');
 		
 		refreshZ(stage);
 	}
