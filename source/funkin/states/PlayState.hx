@@ -585,6 +585,9 @@ class PlayState extends MusicBeatState
 	
 	var input:InputSystem;
 	
+	private var traceCheck:Bool = false;
+	private var loadStart:Float = 0;
+	
 	override public function create():Void
 	{
 		FlxG.sound.music?.stop();
@@ -597,6 +600,10 @@ class PlayState extends MusicBeatState
 		countdownSounds = true;
 		
 		instance = this;
+		
+		traceCheck = #if debug true #else false #end || ClientPrefs.inDevMode;
+		
+		if (traceCheck) loadStart = Sys.time();
 		
 		GameOverSubstate.resetVariables();
 		
@@ -651,6 +658,8 @@ class PlayState extends MusicBeatState
 		scripts.set('isStoryMode', isStoryMode);
 		
 		if (SONG.stage == null || SONG.stage.length == 0) SONG.stage = 'stage';
+		
+		var vizLoadStart:Float = traceCheck ? Sys.time() : 0;
 		
 		stage = new Stage(SONG.stage);
 		scripts.set('stage', stage);
@@ -734,6 +743,8 @@ class PlayState extends MusicBeatState
 			dad.setPosition(GF_X, GF_Y);
 			if (gf != null) gf.visible = false;
 		}
+		
+		if (traceCheck) trace('loading create took ${Sys.time() - vizLoadStart}');
 		
 		Conductor.songPosition = -5000;
 		
@@ -852,9 +863,10 @@ class PlayState extends MusicBeatState
 		
 		FunkinAssets.cache.clearUnusedMemory();
 		
+		if (traceCheck) trace('FULL SONG LOAD TIME: ${Sys.time() - loadStart}');
+		
 		refreshZ(stage);
 	}
-	
 	function set_songSpeed(value:Float):Float
 	{
 		songSpeed = value;
@@ -1275,7 +1287,11 @@ class PlayState extends MusicBeatState
 		curSong = songData.song;
 		
 		audio = new PlayableSong();
+		
+		var start = traceCheck ? Sys.time() : 0;
 		audio.populate(SONG);
+		if (traceCheck) trace('loading song took ${Sys.time() - start} seconds');
+		
 		audio.hit();
 		add(audio);
 		
@@ -1325,9 +1341,7 @@ class PlayState extends MusicBeatState
 		
 		var events = getEventsDirect();
 		
-		#if debug
-		var cpuTime = Sys.time();
-		#end
+		var cpuTime = traceCheck ? Sys.time() : 0;
 		
 		if (ClientPrefs.inDevMode)
 		{
@@ -1475,9 +1489,7 @@ class PlayState extends MusicBeatState
 		
 		speedChanges.sort(SortUtil.svSort);
 		
-		#if debug
-		trace('loading chart took: ' + (Sys.time() - cpuTime));
-		#end
+		if (traceCheck) trace('loading chart took: ' + (Sys.time() - cpuTime));
 		
 		checkEventNote();
 		generatedMusic = true;
