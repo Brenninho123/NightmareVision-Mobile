@@ -601,7 +601,7 @@ class PlayState extends MusicBeatState
 		
 		instance = this;
 		
-		traceCheck = #if debug true #else false #end || ClientPrefs.inDevMode;
+		traceCheck = #if debug true #else false #end || #if VERBOSE_LOGS true #else false #end || ClientPrefs.inDevMode;
 		
 		if (traceCheck) loadStart = Sys.time();
 		
