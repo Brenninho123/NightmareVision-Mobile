@@ -76,7 +76,7 @@
     
     <haxeflag name="-dce no" />
 
-    <!-- HAXDEFS -->
+    <!-- HAXEDEFS -->
 
     <!--Needed for haxeui-->
     <haxedef name="haxeui_dont_impose_base_class"/>
