@@ -2966,8 +2966,6 @@ class PlayState extends MusicBeatState
 		
 		if (lastBeatHit >= curBeat) return;
 		
-		if (generatedMusic) notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
-		
 		handleBoppers(curBeat);
 		
 		if (beatsPerZoom == 0) beatsPerZoom = 4;
