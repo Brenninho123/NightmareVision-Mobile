@@ -2837,6 +2837,8 @@ class PlayState extends MusicBeatState
 	}
 	
 	// Hold notes
+	var holders:Array<Character> = [];
+	
 	function keyShit():Void
 	{
 		// HOLDING
@@ -2899,6 +2901,14 @@ class PlayState extends MusicBeatState
 				for (field in playFields)
 				{
 					if (field.playerControls && field.owner?.holding) field.owner.holding = false;
+				}
+				
+				if (holders.length > 0)
+				{
+					for (holder in holders)
+						holder.holding = false;
+						
+					holders.resize(0);
 				}
 			}
 		}
