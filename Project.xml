@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
     <!-- APP SETTINGS -->
-    <app title="Friday Night Funkin" file="Friday Night Funkin" packageName="com.nmvTeam.nightmareEngine" package="com.nmvTeam.nightmareEngine" main="Main" version="0.2.7" company="nmvTeam" />
+    <app title="Friday Night Funkin" file="Friday Night Funkin" packageName="com.nmvTeam.nightmareEngine" package="com.nmvTeam.nightmareEngine" main="Main" version="0.2.7" company="nmvTeam"/>
 
-    <window width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" />
+    <window width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false"/>
     <window if="desktop" orientation="landscape" fullscreen="false" resizable="true" vsync="false"/>
-	<window unless="mac" allow-high-dpi="true" />
+	<window unless="mac" allow-high-dpi="true"/>
 
     <window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" resizable="false"/>
 
     <!-- ENGINE CONFIGS -->
 
-    <define name="MODS_ALLOWED" if="desktop" />
-    <define name="VIDEOS_ALLOWED" if="cpp" unless="hl"/>
-    <define name="DISCORD_ALLOWED" if="cpp" unless="android || ios" />
+    <define name="MODS_ALLOWED" if="desktop"/>
+    <define name="VIDEOS_ALLOWED" if="cpp"/>
+    <define name="DISCORD_ALLOWED" if="cpp" unless="android || ios"/>
 
     <!-- PATH SETTINGS -->
 
-    <classpath name="source" />
+    <classpath name="source"/>
 
-    <!--Fixes hxvlc using global rather than local. you will need to use hmm/hxpkg to compile this project though-->
+    <!--Fixes hxvlc using global rather than local. you will need to use hmm / hxpkg to compile this project though-->
     <setenv name="HAXEPATH" value="./"/>
 
-    <set name="BUILD_DIR" value="export/debug" if="debug" />
+    <set name="BUILD_DIR" value="export/debug" if="debug"/>
     <set name="BUILD_DIR" value="export/release" unless="debug" />
     <set name="BUILD_DIR" value="export/32bit" if="32bits" />
     <set name="BUILD_DIR" value="${BUILD_DIR}-tracy" if="FEATURE_DEBUG_TRACY"/>
@@ -41,18 +41,17 @@
     <!-- HAXE LIBS -->
     <!--Core engine libraries-->
     <haxelib name="openfl"/>
-
     <haxelib name="flixel"/>
     <haxelib name="flixel-addons"/>
     <haxelib name="flixel-ui" version="2.6.4"/>
-
+    <haxelib name="flixel-animate"/>
+		
     <haxelib name="hscript-iris" version="git"/>
 
-    <haxelib name="flixel-animate"/>
     <haxelib name="moonchart"/>
 
-    <haxelib name="haxeui-core" />
-    <haxelib name="haxeui-flixel" />
+    <haxelib name="haxeui-core"/>
+    <haxelib name="haxeui-flixel"/>
 
     <haxelib name="funkin.vis"/>
     <haxelib name="grig.audio"/>
@@ -77,7 +76,7 @@
     
     <haxeflag name="-dce no" />
 
-    <!-- MISCELLANEOUS -->
+    <!-- HAXDEFS -->
 
     <!--Needed for haxeui-->
     <haxedef name="haxeui_dont_impose_base_class"/>
@@ -86,7 +85,7 @@
     <!--Needed for better error reporting with hscript-->
     <define name="hscriptPos"/>
 
-    <!--Tracy profiler stuff-->
+    <!--Tracy profiler defines-->
     <section if="FEATURE_DEBUG_TRACY">
         <haxedef name="HXCPP_TELEMETRY"/>
         <haxedef name="HXCPP_TRACY"/>
@@ -98,31 +97,32 @@
     <!--Enable for better crash handling/reporting-->
     <haxedef name="CRASH_HANDLER"/>
 
-    <haxedef name="openfl-enable-handle-error" if="CRASH_HANDLER"/>
-
-    <haxedef name="HXCPP_CHECK_POINTER" if="CRASH_HANDLER"/>
-    <haxedef name="HXCPP_STACK_LINE" if="CRASH_HANDLER"/>
-    <haxedef name="HXCPP_STACK_TRACE" if="CRASH_HANDLER"/>
-
-
+	<section if="CRASH_HANDLER">
+   		<haxedef name="openfl-enable-handle-error"/>
+    	<haxedef name="HXCPP_CHECK_POINTER"/>
+    	<haxedef name="HXCPP_STACK_LINE"/>
+    	<haxedef name="HXCPP_STACK_TRACE"/>
+	</section>
+ 
     <!--Remove the legacy health system-->
-    <haxedef name="FLX_NO_HEALTH" />
+    <haxedef name="FLX_NO_HEALTH"/>
 
     <!--Disable the Flixel core focus lost screen-->
-    <haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />
+    <haxedef name="FLX_NO_FOCUS_LOST_SCREEN"/>
 
     <!--Disable the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
-    <haxedef name="FLX_NO_DEBUG" unless="debug" />
-
+    <haxedef name="FLX_NO_DEBUG" unless="debug"/>
 
     <!--For haxe 4.3.0 and newer cleaner error reporting-->
-    <haxedef name="message.reporting" value="pretty" />
+    <haxedef name="message.reporting" value="pretty"/>
 
     <!--For haxe 4.3.0 and newer disables warnings-->
     <haxedef name="no-deprecation-warnings"/>
 
+	<!-- MISCELLANEOUS -->
+
     <icon path="projFiles/icon/icon16.png" size='16'/>
     <icon path="projFiles/icon/icon32.png" size='32'/>
     <icon path="projFiles/icon/icon64.png" size='64'/>
-    <icon path="projFiles/icon/iconOG.png" />
+    <icon path="projFiles/icon/iconOG.png"/>
 </project>
