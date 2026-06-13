@@ -50,6 +50,11 @@ class DiscordClient
 	 */
 	public static function init()
 	{
+		if (!ClientPrefs.discordEnabled) 
+		{
+			close();
+			return;
+		}
 		final discordEventHandlers = new DiscordEventHandlers();
 		
 		discordEventHandlers.ready = cpp.Function.fromStaticFunction(onReady);
@@ -102,7 +107,11 @@ class DiscordClient
 	 */
 	public static function close():Void
 	{
-		if (initiated) Discord.Shutdown();
+		if (initiated) 
+		{
+			Discord.Shutdown();
+			Logger.log('user [$username] has disconnected.', NOTICE);
+		}
 		initiated = false;
 	}
 	
@@ -113,11 +122,9 @@ class DiscordClient
 	{
 		final user:String = cast request[0].username;
 		final discriminator:String = cast request[0].discriminator;
-		
+
 		username = discriminator != '0' ? '$user#$discriminator' : '$user';
-		var discordUser = '[$username]';
-		
-		Logger.log('Successfully connect to user $discordUser', NOTICE);
+		Logger.log('Successfully connected to user [$username]', NOTICE);
 		
 		changePresence();
 	}
