@@ -4,11 +4,12 @@ import flixel.FlxG;
 import flixel.input.FlxInput;
 import flixel.input.actions.FlxAction;
 import flixel.input.actions.FlxActionInput;
-import flixel.input.actions.FlxActionManager;
 import flixel.input.actions.FlxActionSet;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.keyboard.FlxKey;
+
+import funkin.states.options.ControlsSubState;
 
 // at some point i do wanna rework this to be simpler and easier to work with
 
@@ -102,6 +103,9 @@ class Controls extends FlxActionSet
 		}
 		FlxG.gamepads.deviceConnected.add(gamepadConnected);
 		FlxG.gamepads.deviceDisconnected.add(gamepadDisconnected);
+		
+		instance.customActions.clear();
+		ControlsSubState.resetGroups();
 	}
 	
 	static function gamepadConnected(gamepad:FlxGamepad)
@@ -149,6 +153,7 @@ class Controls extends FlxActionSet
 	var _reset = new FlxActionDigital(Action.RESET);
 	
 	public var actions:Map<Action, FlxActionDigital> = new Map<Action, FlxActionDigital>();
+	public var customActions:Map<Action, FlxActionDigital> = new Map<Action, FlxActionDigital>();
 	
 	public var gamepadsAdded:Array<Int> = [];
 	public var keyboardScheme = KeyboardScheme.None;
@@ -437,6 +442,84 @@ class Controls extends FlxActionSet
 	}
 	
 	/**
+	 * Dynamically registers a new custom action with a binded key attached.
+	 * Creates the standard, pressed, and released variants.
+	 * 
+	 * Good for mods that have more than 4 keys, or have a custom menu that might need specified keybinds separate from the pre-existing ones.
+	 */
+	public function addCustomKey(_name:String, _keys:Array<FlxKey>):Void
+	{
+		final name = _name.toLowerCase();
+		var keys = _keys.copy();
+		while (keys.length < 2)
+			keys.push(NONE);
+			
+		var actionNormal = new FlxActionDigital(name);
+		var actionPress = new FlxActionDigital(name + "-press");
+		var actionRelease = new FlxActionDigital(name + "-release");
+		
+		add(actionNormal);
+		add(actionPress);
+		add(actionRelease);
+		
+		// add to BOTH custom & normal actions, customActions simply keeps track of which actions are custom & actions actually handles.. well... the action
+		for (map in [customActions, actions])
+		{
+			map.set(name, actionNormal);
+			map.set('$name-press', actionPress);
+			map.set('$name-release', actionRelease);
+		}
+		
+		// make it bindable yo
+		ClientPrefs.addCustomKey(name, keys);
+		customBind(name, keys);
+	}
+	
+	/**
+	 * Checks for the status of the custom bind based on the inputted name.
+	 * 
+	 * Lets say you want to check the status of `note_poop`'s variants.
+	 * To find release, you would input `note_poop-release`, and for pressed you would input `note_poop-press`.
+	 * If you just want the normal check, do simply `note_poop`
+	 * @param _name 
+	 */
+	public function checkCustom(_name:String)
+	{
+		final name = _name.toLowerCase();
+		
+		if (customActions.exists(name))
+		{
+			final action = customActions.get(name);
+			
+			if (action != null)
+			{
+				return action.check();
+			}
+		}
+		
+		return false;
+	}
+	
+	public function customBind(name:String, keys:Array<FlxKey>)
+	{
+		trace('binded $name to $keys');
+		
+		var copyKeys:Array<FlxKey> = keys.copy();
+		for (i in 0...copyKeys.length)
+		{
+			if (i == NONE) copyKeys.remove(i);
+		}
+		
+		for (_act in [name, '$name-press', '$name-release'])
+		{
+			final action = customActions.get(_act);
+			final state = _act.contains('-press') ? JUST_PRESSED : _act.contains('-release') ? JUST_RELEASED : PRESSED;
+			
+			addKeys(action, copyKeys, state);
+		}
+	}
+	
+	/**
 	 * Sets all actions that pertain to the binder to trigger when the supplied keys are used.
 	 * If binder is a literal you can inline this
 	 */
@@ -506,6 +589,16 @@ class Controls extends FlxActionSet
 				inline bindKeys(Control.BACK, keysMap.get('back'));
 				inline bindKeys(Control.PAUSE, keysMap.get('pause'));
 				inline bindKeys(Control.RESET, keysMap.get('reset'));
+				
+				trace('checking custom binds now [${customActions.keys()}]');
+				for (i in customActions.keys())
+				{
+					if (i.endsWith('-release') || i.endsWith('-press')) continue;
+					
+					trace(keysMap.get(i));
+					customBind(i, keysMap.get(i));
+				}
+				
 			case Duo(true):
 				inline bindKeys(Control.UI_UP, [W]);
 				inline bindKeys(Control.UI_DOWN, [S]);
