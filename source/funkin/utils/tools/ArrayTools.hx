@@ -13,7 +13,7 @@ class ArrayTools
 			array.pop();
 		return array;
 	}
-
+	
 	/**
 	 * Shuffles this array in place using Fisher-Yates.
 	 * @param array
@@ -29,7 +29,7 @@ class ArrayTools
 		}
 		return array;
 	}
-
+	
 	/**
 	 * Returns the last element, or null if empty.
 	 * @param array
@@ -39,7 +39,7 @@ class ArrayTools
 	{
 		return array.length > 0 ? array[array.length - 1] : null;
 	}
-
+	
 	/**
 	 * Removes duplicate values from this array in place.
 	 * @param array
@@ -51,14 +51,12 @@ class ArrayTools
 		var i = 0;
 		while (i < array.length)
 		{
-			if (seen.indexOf(array[i]) != -1)
-				array.splice(i, 1);
-			else
-				seen.push(array[i++]);
+			if (seen.indexOf(array[i]) != -1) array.splice(i, 1);
+			else seen.push(array[i++]);
 		}
 		return array;
 	}
-
+	
 	/**
 	 * Returns a new array with all elements from both arrays, without duplicates.
 	 * @param a
@@ -69,11 +67,10 @@ class ArrayTools
 	{
 		var result = a.copy();
 		for (item in b)
-			if (result.indexOf(item) == -1)
-				result.push(item);
+			if (result.indexOf(item) == -1) result.push(item);
 		return result;
 	}
-
+	
 	/**
 	 * Swaps two elements in place by index.
 	 * @param array
@@ -86,26 +83,26 @@ class ArrayTools
 		array[i] = array[j];
 		array[j] = tmp;
 	}
-
-	/**
-	 * Groups elements by a key returned from fn, returning a map of key to matching elements.
-	 * @param array
-	 * @param fn
-	 * @return Map<K, Array<T>>
-	 */
-	public static function groupBy<T, K>(array:Array<T>, fn:T->K):Map<K, Array<T>>
-	{
-		var map = new Map<K, Array<T>>();
-		for (item in array)
-		{
-			var key = fn(item);
-			if (!map.exists(key))
-				map.set(key, []);
-			map.get(key).push(item);
-		}
-		return map;
-	}
-
+	
+	// /**
+	//  * Groups elements by a key returned from fn, returning a map of key to matching elements.
+	//  * @param array
+	//  * @param fn
+	//  * @return Map<K, Array<T>>
+	//  */
+	// public static function groupBy<T, K>(array:Array<T>, fn:T->K):Map<K, Array<T>>
+	// {
+	// 	var map = new Map<K, Array<T>>();
+	// 	for (item in array)
+	// 	{
+	// 		var key = fn(item);
+	// 		if (!map.exists(key))
+	// 			map.set(key, []);
+	// 		map.get(key).push(item);
+	// 	}
+	// 	return map;
+	// }
+	
 	/**
 	 * Splits the array into sub-arrays of the given size.
 	 * @param array
