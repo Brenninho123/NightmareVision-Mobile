@@ -590,12 +590,10 @@ class Controls extends FlxActionSet
 				inline bindKeys(Control.PAUSE, keysMap.get('pause'));
 				inline bindKeys(Control.RESET, keysMap.get('reset'));
 				
-				trace('checking custom binds now [${customActions.keys()}]');
 				for (i in customActions.keys())
 				{
 					if (i.endsWith('-release') || i.endsWith('-press')) continue;
 					
-					trace(keysMap.get(i));
 					customBind(i, keysMap.get(i));
 				}
 				
