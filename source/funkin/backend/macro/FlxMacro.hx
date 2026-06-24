@@ -280,7 +280,7 @@ class FlxMacro
 									$expr;
 									rgbShader = null;
 									// looks confusing im just making "ArrayTools.clear(rgbR)", "ArrayTools.clear(rgbG)", etc..
-									$b{[for (i in shaderParams) macro funkin.utils.tools.ArrayTools.clear(this.$i)]}
+									$b{[for (i in shaderParams) macro funkin.utils.ArrayUtil.clear(this.$i)]}
 								}
 						default:
 							throw "Invalid field";

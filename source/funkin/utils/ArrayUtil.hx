@@ -1,6 +1,7 @@
-package funkin.utils.tools;
+package funkin.utils;
 
-class ArrayTools
+@:nullSafety
+class ArrayUtil
 {
 	/**
 	 * Clears this array in place.
@@ -83,25 +84,6 @@ class ArrayTools
 		array[i] = array[j];
 		array[j] = tmp;
 	}
-	
-	// /**
-	//  * Groups elements by a key returned from fn, returning a map of key to matching elements.
-	//  * @param array
-	//  * @param fn
-	//  * @return Map<K, Array<T>>
-	//  */
-	// public static function groupBy<T, K>(array:Array<T>, fn:T->K):Map<K, Array<T>>
-	// {
-	// 	var map = new Map<K, Array<T>>();
-	// 	for (item in array)
-	// 	{
-	// 		var key = fn(item);
-	// 		if (!map.exists(key))
-	// 			map.set(key, []);
-	// 		map.get(key).push(item);
-	// 	}
-	// 	return map;
-	// }
 	
 	/**
 	 * Splits the array into sub-arrays of the given size.
