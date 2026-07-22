@@ -119,16 +119,20 @@ class MusicBeatState extends FlxUIState
 		updateCurStep();
 		updateBeat();
 		
-		if (oldStep != curStep)
+		if (curStep > oldStep)
 		{
-			if (curStep > 0) stepHit();
-			
-			if (PlayState.SONG != null)
+			for (step in oldStep...curStep)
 			{
-				if (oldStep < curStep) updateSection();
-				else rollbackSection();
+				curStep = step + 1;
+				
+				updateBeat();
+				
+				if (curStep >= 0) stepHit();
 			}
+			
+			if (PlayState.SONG != null) updateSection();
 		}
+		else if (PlayState.SONG != null) rollbackSection();
 		
 		final scriptArgs = [elapsed];
 		scriptGroup.call('onUpdate', scriptArgs);
