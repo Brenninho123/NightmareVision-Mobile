@@ -1150,7 +1150,7 @@ class PlayState extends MusicBeatState
 	{
 		startingSong = false;
 		
-		audio.inst?.onComplete ??= finishSong.bind(false);
+		audio.inst.onComplete = finishSong.bind(false);
 		
 		#if FLX_PITCH
 		audio.pitch = playbackRate;
