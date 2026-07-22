@@ -981,12 +981,13 @@ class ChartEditorState extends haxe.ui.backend.flixel.UIState
 		directories.push(Paths.mods(Mods.currentModDirectory + '/events/'));
 		for (mod in Mods.globalMods)
 			directories.push(Paths.mods(mod + '/events/'));
+			
+		var eventExts:Array<String> = FunkinScript.H_EXTS.concat(["txt"]);
 		
-		var eventexts = FunkinScript.H_EXTS.concat(["txt"]);
-
 		var pushedEvents:Array<String> = [];
-		for (event in eventStuff) pushedEvents.push(event[0]);
-		
+		for (event in eventStuff)
+			pushedEvents.push(event[0]);
+			
 		for (i in 0...directories.length)
 		{
 			var directory:String = directories[i];
@@ -994,19 +995,21 @@ class ChartEditorState extends haxe.ui.backend.flixel.UIState
 			{
 				var files = FunkinAssets.readDirectory(directory);
 				files.sort((a, b) -> return Path.extension(a) == "txt" ? 1 : 0);
-
+				
 				for (file in files)
 				{
 					var path = Path.join([directory, file]);
-					if (!FunkinAssets.isDirectory(path) && file != 'readme.txt' && eventexts.contains(Path.extension(file)))
+					if (!FunkinAssets.isDirectory(path) && file != 'readme.txt' && eventExts.contains(Path.extension(file)))
 					{
 						var fileToCheck:String = Path.withoutExtension(file);
 						if (!pushedEvents.contains(fileToCheck))
 						{
-							if (FunkinScript.H_EXTS.contains(Path.extension(file)))
-								eventStuff.push([fileToCheck, 'scripted description']);
+							if (FunkinScript.isHxFile(file)) eventStuff.push([fileToCheck, 'Script Event']);
 							else
-								eventStuff.push([fileToCheck, File.getContent(path)]);
+							{
+								final desc = FunkinAssets.getContent(path);
+								eventStuff.push([fileToCheck, desc]);
+							}
 						}
 						pushedEvents.push(fileToCheck);
 					}
