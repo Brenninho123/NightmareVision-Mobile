@@ -2828,6 +2828,11 @@ class PlayState extends MusicBeatState
 					spr.playAnim('static');
 					spr.resetAnim = 0;
 				}
+				
+				for (splash in field.grpSusSplashes)
+				{
+					if (splash.alive && splash.noteData == key && !splash.completed) splash.kill();
+				}
 			}
 			scripts.call('onKeyRelease', [key]);
 			scripts.call('onInputRelease', [key]);
