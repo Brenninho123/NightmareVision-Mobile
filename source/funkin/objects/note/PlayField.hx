@@ -535,7 +535,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 					char.playGhostAnim(note.noteData, ghostAnim, true);
 				}
 				
-				if (note.isSustainNote && !note.isSustainEnd && char.animOffsets.exists('$animToPlay-sus')) char.playAnim('$animToPlay-sus', false);
+				if (note.isSustainNote && !note.isSustainEnd && char.animOffsets.exists('$animToPlay-hold')) char.playAnim('$animToPlay-hold', false);
 				else char.playAnim(animToPlay, true);
 				
 				if (!note.isSustainNote || note.prevNote?.isSustainNote) char.lastHitTime = note.strumTime;
