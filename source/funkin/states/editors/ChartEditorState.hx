@@ -1,5 +1,6 @@
 package funkin.states.editors;
 
+import funkin.objects.AttachedModule;
 import funkin.data.Chart;
 
 import haxe.ds.IntMap;
@@ -434,12 +435,11 @@ class ChartEditorState extends haxe.ui.backend.flixel.UIState
 		strumLine = new FlxSprite(0, 50).makeGraphic(Std.int(GRID_SIZE * ((song.keys * song.lanes) + 1)), 4);
 		add(strumLine);
 		
-		quant = new AttachedSprite('editors/chart_quant', 'chart_quant');
+		quant = cast new AttachedSprite().loadAtlasFrames(Paths.getAtlasFrames('editors/chart_quant'));
 		quant.animation.addByPrefix('q', 'chart_quant', 0, false);
 		quant.animation.play('q', true, false, 0);
-		quant.sprTracker = strumLine;
-		quant.xAdd = -32;
-		quant.yAdd = 8;
+		quant.attachedModule.tracked = strumLine;
+		quant.attachedModule.positionOffset.set(-32, 8);
 		add(quant);
 		
 		strumLineNotes = new FlxTypedGroup<StrumNote>();

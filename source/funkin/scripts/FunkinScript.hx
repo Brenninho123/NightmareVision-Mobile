@@ -343,8 +343,6 @@ class FunkinScript extends IrisEx implements IFlxDestroyable
 		set("BGSprite", BGSprite);
 		set("StrumNote", StrumNote);
 		set("Alphabet", Alphabet);
-		set("AttachedSprite", AttachedSprite);
-		set("AttachedAlphabet", AttachedAlphabet);
 		
 		set("CutsceneHandler", funkin.objects.CutsceneHandler);
 		set('DialogueBox', funkin.objects.DialogueBox);
