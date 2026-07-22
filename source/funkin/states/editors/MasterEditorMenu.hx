@@ -106,6 +106,7 @@ class MasterEditorMenu extends MusicBeatState
 		
 		if (controls.ACCEPT)
 		{
+			var muteMusic:Bool = true;
 			switch (options[curSelected])
 			{
 				case 'Mods Manager':
@@ -116,6 +117,7 @@ class MasterEditorMenu extends MusicBeatState
 					FlxG.switchState(() -> new WeekEditorState());
 				case 'Metadata Editor':
 					openSubState(new SongMetaEditor());
+					muteMusic = false;
 				case 'Menu Character Editor':
 					FlxG.switchState(() -> new MenuCharacterEditorState());
 				case 'Chart Editor': // felt it would be cool maybe
@@ -125,8 +127,11 @@ class MasterEditorMenu extends MusicBeatState
 				case 'Chart Converter':
 					FlxG.switchState(() -> new ChartConverterState());
 			}
-			if (FlxG.sound.music != null) FlxG.sound.music.volume = 0;
-			FreeplayState.destroyFreeplayVocals();
+			if (muteMusic)
+			{
+				if (FlxG.sound.music != null) FlxG.sound.music.volume = 0;
+				FreeplayState.destroyFreeplayVocals();
+			}
 		}
 		
 		var bullShit:Int = 0;
