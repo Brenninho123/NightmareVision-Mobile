@@ -50,7 +50,7 @@ class DiscordClient
 	 */
 	public static function init()
 	{
-		if (!ClientPrefs.discordEnabled) 
+		if (!ClientPrefs.discordEnabled)
 		{
 			close();
 			return;
@@ -87,6 +87,30 @@ class DiscordClient
 	}
 	
 	/**
+	 * Shuts down the current discord RPC connection
+	 */
+	public static function close():Void
+	{
+		if (initiated)
+		{
+			Discord.Shutdown();
+			Logger.log('user [$username] has disconnected.', NOTICE);
+		}
+		
+		username = 'Unknown';
+		initiated = false;
+	}
+	
+	/**
+	 * Restarts the current discord RPC connection
+	 */
+	public static function restart():Void
+	{
+		close();
+		init();
+	}
+	
+	/**
 	 * Triggered when discord connection fails.
 	 */
 	static function onError(errorCode:Int, message:cpp.ConstCharStar):Void
@@ -103,26 +127,13 @@ class DiscordClient
 	}
 	
 	/**
-	 * Shuts down the current discord RPC
-	 */
-	public static function close():Void
-	{
-		if (initiated) 
-		{
-			Discord.Shutdown();
-			Logger.log('user [$username] has disconnected.', NOTICE);
-		}
-		initiated = false;
-	}
-	
-	/**
 	 * Triggered when discord connection is successfully connected
 	 */
 	static function onReady(request:cpp.RawConstPointer<DiscordUser>):Void
 	{
 		final user:String = cast request[0].username;
 		final discriminator:String = cast request[0].discriminator;
-
+		
 		username = discriminator != '0' ? '$user#$discriminator' : '$user';
 		Logger.log('Successfully connected to user [$username]', NOTICE);
 		
@@ -195,7 +206,9 @@ class DiscordClient
 		
 	public static function close():Void {}
 	
-	public static function init() {}
+	public static function init():Void {}
+	
+	public static function restart():Void {}
 	
 	static function set_rpcId(value:String):String return (rpcId = value);
 }
