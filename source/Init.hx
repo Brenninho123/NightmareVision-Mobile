@@ -54,14 +54,16 @@ class Init extends FlxState
 		
 		FlxG.autoPause = ClientPrefs.autoPause;
 		
+		funkin.scripts.FunkinScript.init();
+		
 		// ready backends
 		funkin.backend.plugins.HotReloadPlugin.init();
+		
+		// funkin.backend.plugins.ModPlugin.init();
 		
 		funkin.backend.plugins.DebugTextPlugin.init();
 		
 		funkin.backend.plugins.FullScreenPlugin.init();
-		
-		funkin.scripts.FunkinScript.init();
 		
 		#if VIDEOS_ALLOWED
 		funkin.video.FunkinVideoSprite.init();
