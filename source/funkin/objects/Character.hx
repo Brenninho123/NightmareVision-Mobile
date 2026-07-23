@@ -269,7 +269,7 @@ class Character extends Bopper
 			return;
 		}
 		
-		if (animTimer > 0 && !getAnimName().endsWith('-end'))
+		if (animTimer > 0 && !getAnimName().endsWith('-return'))
 		{
 			animTimer -= elapsed;
 			if (animTimer <= 0)
@@ -289,7 +289,7 @@ class Character extends Bopper
 			dance(forceDance);
 			finishAnim();
 		}
-		else if (getAnimName().endsWith('-end') && isAnimFinished())
+		else if (getAnimName().endsWith('-return') && isAnimFinished())
 		{
 			dance(forceDance);
 		}
@@ -337,15 +337,15 @@ class Character extends Bopper
 	
 	/**
 	 * Plays the characters idle animation.
-	 * First checks if a transition to idle (-end) animation exists,
+	 * First checks if a transition to idle (-return) animation exists,
 	 * then plays the idle animation.
 	 */
 	override function dance(forced:Bool = false)
 	{
 		if (debugMode || specialAnim) return;
-		if (hasAnim(getAnimName() + '-end'))
+		if (hasAnim(getAnimName() + '-return'))
 		{
-			playAnim(getAnimName() + '-end', true);
+			playAnim(getAnimName() + '-return', true);
 		}
 		else
 		{
