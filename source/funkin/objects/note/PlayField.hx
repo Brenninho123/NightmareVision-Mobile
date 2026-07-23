@@ -208,8 +208,12 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			
 			underlaySpr.x = targetX;
 			
+			final angleRad = camera.scrollAngle * flixel.math.FlxAngle.TO_RAD;
+			final cos = Math.abs(Math.cos(angleRad));
+			final sin = Math.abs(Math.sin(angleRad));
+			
 			underlaySpr.scale.x = targetW;
-			underlaySpr.scale.y = camera.viewHeight;
+			underlaySpr.scale.y = camera.viewWidth * sin + camera.viewHeight * cos;
 			underlaySpr.screenCenter(Y);
 			underlaySpr.updateHitbox();
 			
