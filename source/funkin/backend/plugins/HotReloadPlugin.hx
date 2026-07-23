@@ -49,8 +49,8 @@ class HotReloadPlugin extends FlxBasic
 				FunkinAssets.cache.clearUnusedMemory();
 			});
 			funkin.scripting.PluginsManager.populate();
-			@:nullSafety(Off)
-			ModPlugin.instance.populate();
+			// @:nullSafety(Off)
+			// ModPlugin.instance.populate();
 			
 			FlxTransitionableState.skipNextTransIn = FlxTransitionableState.skipNextTransOut = true;
 			FlxG.resetState();
