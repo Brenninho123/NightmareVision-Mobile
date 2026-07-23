@@ -2,6 +2,8 @@ package funkin.backend.plugins;
 
 import flixel.addons.transition.FlxTransitionableState;
 
+import funkin.input.Controls;
+
 /**
  * Plugin that allows easy state reloading
  * 
@@ -34,7 +36,7 @@ class HotReloadPlugin extends FlxBasic
 		if (!ClientPrefs.inDevMode) return;
 		#end
 		
-		if (FlxG.keys.justPressed.F5)
+		if (Controls.instance.SOFTRELOAD)
 		{
 			FlxTransitionableState.skipNextTransIn = FlxTransitionableState.skipNextTransOut = true;
 			FlxG.resetState();
@@ -42,7 +44,7 @@ class HotReloadPlugin extends FlxBasic
 			Mods.applyModConfig();
 		}
 		
-		if (FlxG.keys.justPressed.F6)
+	if (Controls.instance.HARDRELOAD)
 		{
 			FlxG.signals.preStateCreate.addOnce((state) -> {
 				FunkinAssets.cache.clearStoredMemory();
