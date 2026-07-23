@@ -5,9 +5,11 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import funkin.scripts.FunkinScript;
 import funkin.scripts.ScriptGroup;
 
+@:nullSafety
 class ModPlugin extends FlxTypedGroup<FlxBasic>
 {
-	public static var instance:Null<ModPlugin> = null;
+	@:nullSafety(Off)
+	public static var instance:ModPlugin;
 	
 	public static function init()
 	{
@@ -27,8 +29,6 @@ class ModPlugin extends FlxTypedGroup<FlxBasic>
 		
 		if (!FlxG.signals.postStateSwitch.has(onStateSwitchPost)) FlxG.signals.postStateSwitch.add(onStateSwitchPost);
 		if (!FlxG.signals.preStateSwitch.has(onStateSwitch)) FlxG.signals.preStateSwitch.add(onStateSwitch);
-		
-		populate();
 	}
 	
 	override function update(elapsed:Float)
@@ -79,14 +79,18 @@ class ModPlugin extends FlxTypedGroup<FlxBasic>
 			{
 				final scriptName = file.withoutDirectory().withoutExtension();
 				
-				var script = FunkinScript.fromFile(file, scriptName);
-				if (script.__garbage)
+				var script = FunkinScript.fromFile(file, scriptName, false);
+				
+				scripts.addScript(script, true);
+				script.execute();
+				
+				if (script.parsingFailed())
 				{
+					scripts.removeScript(script);
 					script = FlxDestroyUtil.destroy(script);
 					continue;
 				}
 				
-				scripts.addScript(script, true);
 				if (script.exists('onLoad')) script.call('onLoad');
 			}
 		}

@@ -59,7 +59,7 @@ class Init extends FlxState
 		// ready backends
 		funkin.backend.plugins.HotReloadPlugin.init();
 		
-		// funkin.backend.plugins.ModPlugin.init();
+		funkin.backend.plugins.ModPlugin.init();
 		
 		funkin.backend.plugins.DebugTextPlugin.init();
 		
@@ -73,8 +73,10 @@ class Init extends FlxState
 		funkin.utils.WindowUtil.initTracy();
 		#end
 		
-		funkin.scripting.PluginsManager.prepareSignals();
-		funkin.scripting.PluginsManager.populate();
+		funkin.backend.plugins.ModPlugin.instance.populate();
+		
+		// funkin.scripting.PluginsManager.prepareSignals();
+		// funkin.scripting.PluginsManager.populate();
 		
 		FunkinAssets.cache.currentTrackedSounds.addPermanentKey('assets/music/freakyMenu.ogg');
 		
