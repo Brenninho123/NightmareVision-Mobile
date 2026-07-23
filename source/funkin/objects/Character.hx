@@ -332,12 +332,21 @@ class Character extends Bopper
 	}
 	
 	/**
-	 * Plays the characters idle animation
+	 * Plays the characters idle animation.
+	 * First checks if a transition to idle (-end) animation exists,
+	 * then plays the idle animation.
 	 */
 	override function dance(forced:Bool = false)
 	{
 		if (debugMode || specialAnim) return;
-		super.dance(forced);
+		if (hasAnim(getAnimName() + '-end'))
+		{
+			playAnim(getAnimName() + '-end', true);
+		}
+		else
+		{
+			super.dance(forced);
+		}
 	}
 	
 	override function playAnim(animToPlay:String, isForced:Bool = false, isReversed:Bool = false, frame:Int = 0)
