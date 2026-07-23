@@ -529,7 +529,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			{
 				final ghostAnim:String = char.getAnimName();
 				
-				if (!note.isSustainNote && Math.abs(char.lastHitTime - note.strumTime) < 3 && ClientPrefs.jumpGhosts
+				if (!note.isSustainNote && Math.abs(char.lastHitTime - note.strumTime) < 3
 					&& PlayState.instance?.scripts.call('onGhostAnim', [ghostAnim, note]) != ScriptConstants.STOP_FUNC)
 				{
 					char.playGhostAnim(note.noteData, ghostAnim, true);
