@@ -8,11 +8,18 @@ import flixel.FlxBasic;
 @:nullSafety
 class FullScreenPlugin extends FlxBasic
 {
+	@:nullSafety(Off)
 	static var instance:Null<FullScreenPlugin> = null;
 	
 	public static function init()
 	{
-		if (instance == null) FlxG.plugins.addPlugin(instance = new FullScreenPlugin());
+		if (instance == null)
+		{
+			FlxG.plugins.addPlugin(instance = new FullScreenPlugin());
+			#if debug
+			FlxG.console.registerClass(FullScreenPlugin);
+			#end
+		}
 	}
 	
 	public function new()

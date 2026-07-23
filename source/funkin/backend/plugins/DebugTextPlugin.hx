@@ -11,6 +11,7 @@ import flixel.addons.transition.FlxTransitionableState;
 @:nullSafety
 class DebugTextPlugin extends FlxTypedGroup<DebugText>
 {
+	@:nullSafety(Off)
 	static var instance:Null<DebugTextPlugin> = null;
 	
 	public static function init()
@@ -19,6 +20,9 @@ class DebugTextPlugin extends FlxTypedGroup<DebugText>
 		{
 			FlxG.plugins.addPlugin(instance = new DebugTextPlugin());
 			FlxG.signals.preStateSwitch.add(clearTxt);
+			#if debug
+			FlxG.console.registerClass(DebugTextPlugin);
+			#end
 		}
 	}
 	
