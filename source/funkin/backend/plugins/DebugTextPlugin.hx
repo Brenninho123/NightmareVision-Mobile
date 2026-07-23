@@ -12,7 +12,7 @@ import flixel.addons.transition.FlxTransitionableState;
 class DebugTextPlugin extends FlxTypedGroup<DebugText>
 {
 	@:nullSafety(Off)
-	static var instance:Null<DebugTextPlugin> = null;
+	static var instance:DebugTextPlugin;
 	
 	public static function init()
 	{

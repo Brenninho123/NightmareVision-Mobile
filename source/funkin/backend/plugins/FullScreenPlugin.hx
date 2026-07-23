@@ -9,7 +9,7 @@ import flixel.FlxBasic;
 class FullScreenPlugin extends FlxBasic
 {
 	@:nullSafety(Off)
-	static var instance:Null<FullScreenPlugin> = null;
+	static var instance:FullScreenPlugin;
 	
 	public static function init()
 	{

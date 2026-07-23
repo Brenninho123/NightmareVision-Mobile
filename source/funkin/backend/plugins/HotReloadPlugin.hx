@@ -14,7 +14,7 @@ import flixel.addons.transition.FlxTransitionableState;
 class HotReloadPlugin extends FlxBasic
 {
 	@:nullSafety(Off)
-	static var instance:Null<HotReloadPlugin> = null;
+	static var instance:HotReloadPlugin;
 	
 	public static function init()
 	{
