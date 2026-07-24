@@ -83,9 +83,9 @@ class ControlsSubState extends MusicBeatSubstate
 		DEBUG_GROUP = [
 			{label: "Key 1", action: "debug_1"},
 			{label: "Key 2", action: "debug_2"},
-			{label: "Display", action: DISPLAY},
-			{label: "Softreload", action: SOFTRELOAD},
-			{label: "Hardreload", action: HARDRELOAD},
+			{label: "Debug Display", action: SWITCH_DEBUG_DISPLAY},
+			{label: "Soft Reload", action: SOFT_RELOAD},
+			{label: "Hard Reload", action: HARD_RELOAD},
 			null,
 		];
 	}

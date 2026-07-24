@@ -51,10 +51,10 @@ enum abstract Action(String) to String from String
 
 	var FULLSCREEN = "fullscreen";
 
-	var DISPLAY = "display";
+	var SWITCH_DEBUG_DISPLAY = "switch_debug_display";
 
-	var SOFTRELOAD = "softreload";
-	var HARDRELOAD = "hardreload";
+	var SOFT_RELOAD = "soft_reload";
+	var HARD_RELOAD = "hard_reload";
 }
 
 enum Device
@@ -84,9 +84,9 @@ enum Control
 	BACK;
 	PAUSE;
 	FULLSCREEN;
-	DISPLAY;
-	SOFTRELOAD;
-	HARDRELOAD;
+	SWITCH_DEBUG_DISPLAY;
+	SOFT_RELOAD;
+	HARD_RELOAD;
 }
 
 enum KeyboardScheme
@@ -164,10 +164,10 @@ class Controls extends FlxActionSet
 	var _reset = new FlxActionDigital(Action.RESET);
 
 	var _fullscreen = new FlxActionDigital(Action.FULLSCREEN);
-	var _display = new FlxActionDigital(Action.DISPLAY);
+	var switch_debug_display = new FlxActionDigital(Action.SWITCH_DEBUG_DISPLAY);
 
-	var _softreload = new FlxActionDigital(Action.SOFTRELOAD);
-	var _hardreload = new FlxActionDigital(Action.HARDRELOAD);
+	var _soft_reload = new FlxActionDigital(Action.SOFT_RELOAD);
+	var _hard_reload = new FlxActionDigital(Action.HARD_RELOAD);
 	
 	public var actions:Map<Action, FlxActionDigital> = new Map<Action, FlxActionDigital>();
 	public var customActions:Map<Action, FlxActionDigital> = new Map<Action, FlxActionDigital>();
@@ -303,17 +303,17 @@ class Controls extends FlxActionSet
 	
 	inline function get_FULLSCREEN() return _fullscreen.check();
 
-	public var DISPLAY(get, never):Bool;
+	public var SWITCH_DEBUG_DISPLAY(get, never):Bool;
 	
-	inline function get_DISPLAY() return _display.check();
+	inline function get_DISPLAY() return switch_debug_display.check();
 
-	public var SOFTRELOAD(get, never):Bool;
+	public var SOFT_RELOAD(get, never):Bool;
 	
-	inline function get_SOFTRELOAD() return _softreload.check();
+	inline function get_SOFT_RELOAD() return _soft_reload.check();
 
-	public var HARDRELOAD(get, never):Bool;
+	public var HARD_RELOAD(get, never):Bool;
 	
-	inline function get_HARDRELOAD() return _hardreload.check();
+	inline function get_HARD_RELOAD() return _hard_reload.check();
 	
 	public function new(name, scheme = None)
 	{
@@ -351,9 +351,9 @@ class Controls extends FlxActionSet
 		add(_pause);
 		add(_reset);
 		add(_fullscreen);
-		add(_display);
-		add(_softreload);
-		add(_hardreload);
+		add(switch_debug_display);
+		add(_soft_reload);
+		add(_hard_reload);
 		
 		for (action in digitalActions)
 			actions[action.name] = action;
@@ -379,9 +379,9 @@ class Controls extends FlxActionSet
 			case PAUSE: _pause;
 			case RESET: _reset;
 			case FULLSCREEN: _fullscreen;
-			case DISPLAY: _display;
-			case SOFTRELOAD: _softreload;
-			case HARDRELOAD: _hardreload;
+			case SWITCH_DEBUG_DISPLAY: switch_debug_display;
+			case SOFT_RELOAD: _soft_reload;
+			case HARD_RELOAD: _hard_reload;
 		}
 	}
 	
@@ -441,12 +441,12 @@ class Controls extends FlxActionSet
 				func(_reset, JUST_PRESSED);
 			case FULLSCREEN:
 				func(_fullscreen, JUST_PRESSED);
-			case DISPLAY:
-				func(_display, JUST_PRESSED);
-			case SOFTRELOAD:
-				func(_softreload, JUST_PRESSED);
-			case HARDRELOAD:
-				func(_hardreload, JUST_PRESSED);
+			case SWITCH_DEBUG_DISPLAY:
+				func(switch_debug_display, JUST_PRESSED);
+			case SOFT_RELOAD:
+				func(_soft_reload, JUST_PRESSED);
+			case HARD_RELOAD:
+				func(_hard_reload, JUST_PRESSED);
 		}
 	}
 	
@@ -640,10 +640,10 @@ class Controls extends FlxActionSet
 				inline bindKeys(Control.RESET, keysMap.get('reset'));
 
 				inline bindKeys(Control.FULLSCREEN, keysMap.get('fullscreen'));
-				inline bindKeys(Control.DISPLAY, keysMap.get('display'));
+				inline bindKeys(Control.SWITCH_DEBUG_DISPLAY, keysMap.get('switch_debug_display'));
 
-				inline bindKeys(Control.SOFTRELOAD, keysMap.get('softreload'));
-				inline bindKeys(Control.HARDRELOAD, keysMap.get('hardreload'));
+				inline bindKeys(Control.SOFT_RELOAD, keysMap.get('soft_reload'));
+				inline bindKeys(Control.HARD_RELOAD, keysMap.get('hard_reload'));
 				
 				for (i in customActions.keys())
 				{
