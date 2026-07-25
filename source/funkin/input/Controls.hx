@@ -48,11 +48,11 @@ enum abstract Action(String) to String from String
 	var BACK = "back";
 	var PAUSE = "pause";
 	var RESET = "reset";
-
+	
 	var FULLSCREEN = "fullscreen";
-
+	
 	var SWITCH_DEBUG_DISPLAY = "switch_debug_display";
-
+	
 	var SOFT_RELOAD = "soft_reload";
 	var HARD_RELOAD = "hard_reload";
 }
@@ -162,10 +162,10 @@ class Controls extends FlxActionSet
 	var _back = new FlxActionDigital(Action.BACK);
 	var _pause = new FlxActionDigital(Action.PAUSE);
 	var _reset = new FlxActionDigital(Action.RESET);
-
+	
 	var _fullscreen = new FlxActionDigital(Action.FULLSCREEN);
 	var switch_debug_display = new FlxActionDigital(Action.SWITCH_DEBUG_DISPLAY);
-
+	
 	var _soft_reload = new FlxActionDigital(Action.SOFT_RELOAD);
 	var _hard_reload = new FlxActionDigital(Action.HARD_RELOAD);
 	
@@ -298,19 +298,19 @@ class Controls extends FlxActionSet
 	public var NOTE_DODGE_R(get, never):Bool;
 	
 	inline function get_NOTE_DODGE_R() return _note_dodgeR.check();
-
+	
 	public var FULLSCREEN(get, never):Bool;
 	
 	inline function get_FULLSCREEN() return _fullscreen.check();
-
+	
 	public var SWITCH_DEBUG_DISPLAY(get, never):Bool;
 	
-	inline function get_DISPLAY() return switch_debug_display.check();
-
+	inline function get_SWITCH_DEBUG_DISPLAY() return switch_debug_display.check();
+	
 	public var SOFT_RELOAD(get, never):Bool;
 	
 	inline function get_SOFT_RELOAD() return _soft_reload.check();
-
+	
 	public var HARD_RELOAD(get, never):Bool;
 	
 	inline function get_HARD_RELOAD() return _hard_reload.check();
@@ -638,10 +638,10 @@ class Controls extends FlxActionSet
 				inline bindKeys(Control.BACK, keysMap.get('back'));
 				inline bindKeys(Control.PAUSE, keysMap.get('pause'));
 				inline bindKeys(Control.RESET, keysMap.get('reset'));
-
+				
 				inline bindKeys(Control.FULLSCREEN, keysMap.get('fullscreen'));
 				inline bindKeys(Control.SWITCH_DEBUG_DISPLAY, keysMap.get('switch_debug_display'));
-
+				
 				inline bindKeys(Control.SOFT_RELOAD, keysMap.get('soft_reload'));
 				inline bindKeys(Control.HARD_RELOAD, keysMap.get('hard_reload'));
 				
