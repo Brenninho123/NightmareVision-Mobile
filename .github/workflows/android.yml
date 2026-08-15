@@ -1,0 +1,82 @@
+name: Android Binaries
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      buildFlags:
+        required: false
+        type: string
+
+env:
+  HAXE_VERSION: 4.3.7
+  HXCPP_COMPILE_CACHE: ${{ github.workspace }}/.hxcpp_cache
+  LIME_HASH: 6421de16b9dfa4fb55c19f12db65d392a57585c8
+
+jobs:
+  Android:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - uses: krdlab/setup-haxe@v2.1.0
+        with:
+          haxe-version: ${{ env.HAXE_VERSION }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Setup Android NDK
+        uses: nsetup/setup-ndk@v1
+        with:
+          ndk-version: r21e
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential libgl1-mesa-dev libglu1-mesa-dev pkg-config
+
+      - name: Install libs
+        run: |
+          set -euo pipefail
+          haxelib setup ~/haxelib
+          haxelib install hxpkg --quiet
+          haxelib run hxpkg install
+          rm -rf .haxelib/lime
+          git clone https://github.com/FunkinCrew/lime .haxelib/lime/git
+          git -C .haxelib/lime/git checkout ${{ env.LIME_HASH }}
+          git -C .haxelib/lime/git submodule update --init --recursive --force
+          haxelib dev lime .haxelib/lime/git
+
+      - name: Configure Lime Android SDK
+        run: |
+          haxelib run lime config ANDROID_SDK $ANDROID_HOME
+          haxelib run lime config ANDROID_NDK_HOME $ANDROID_NDK_HOME
+          haxelib run lime config JAVA_HOME $JAVA_HOME
+
+      - name: Rebuild Lime (Android)
+        run: |
+          haxelib run lime rebuild android -release
+
+      - name: Compile build
+        run: haxelib run lime build android -D ${{inputs.buildFlags}}
+
+      - name: Publish artifact
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: NightmareVision (Android)
+          path: export/release/android/bin/app/build/outputs/apk/debug/app-debug.apk
