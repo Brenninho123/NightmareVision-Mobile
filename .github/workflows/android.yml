@@ -59,15 +59,19 @@ jobs:
           git -C .haxelib/lime/git submodule update --init --recursive --force
           haxelib dev lime .haxelib/lime/git
 
+      - name: Rebuild Lime (Linux host binary)
+        run: |
+          haxelib run lime rebuild cpp -release
+
+      - name: Rebuild Lime (Android target)
+        run: |
+          haxelib run lime rebuild android -release
+
       - name: Configure Lime Android SDK
         run: |
           haxelib run lime config ANDROID_SDK $ANDROID_HOME
           haxelib run lime config ANDROID_NDK_HOME $ANDROID_HOME/ndk/21.4.7075529
           haxelib run lime config JAVA_HOME $JAVA_HOME
-
-      - name: Rebuild Lime (Android)
-        run: |
-          haxelib run lime rebuild android -release
 
       - name: Compile build
         run: haxelib run lime build android -D ${{inputs.buildFlags}}
